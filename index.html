@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What if?</title>
+<style>
+  :root {
+    --bg: #161646;
+    --surface: #1c1c1c;
+    --text: #1d1d1f;
+    --muted: #6e6e73;
+    --accent: #2f6fed;
+    --line: #e2e2e7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c0c0c;
+      --surface: #0c0c0c;
+      --text: #f2f2f4;
+      --muted: #9a9aa2;
+      --accent: #cfa21c;
+      --line: #0c0c0c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1rem;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .cover {
+    width: min(480px, 80vw);
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 12px;
+    background: var(--line);
+  }
+  h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
+  .intro {
+    width: min(480px, 100%);
+    margin: 0;
+    line-height: 1.6;
+    text-align: center;
+  }
+  .player {
+    width: min(480px, 100%);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1rem;
+  }
+  audio { width: 100%; }
+  ul { list-style: none; margin: 1rem 0 0; padding: 0; }
+  li {
+    padding: 0.7rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  li:hover { background: var(--bg); }
+  li.playing { color: var(--accent); font-weight: 600; }
+  li:focus-visible { outline: 2px solid var(--accent); }
+</style>
+</head>
+<body>
+
+  <h1>Dear Júlia</h1>
+  <p class="intro">
+    You have introduced me to a lot of music, but the Strokes is still the band I associate the most with you.
+    Here's an album of some songs that are the answer to "What if this was made by the Strokes?" (and a song actually by them)
+  </p>
+  <p> Happy birthday!</p>
+
+
+  <img class="cover" src="copertina.png" alt="Album cover">
+
+  <div class="player">
+    <audio id="audio" controls></audio>
+    <ul id="playlist"></ul>
+  </div>
+
+<script>
+  const tracks = [
+    { title: "Infinty Repeating",   src: "audio/Infinity_repeating.mp3" },
+    { title: "As it was",   src: "audio/As_it_was.mp3" },
+    { title: "Instant Crush", src: "audio/Instant_crush.mp3" },
+    { title: "11th dimension", src: "audio/11th_dimension.mp3" },
+    { title: "Peaches", src: "audio/Peaches.mp3" },
+    { title: "Please Please Please", src: "audio/Please_Please_Please.mp3" },
+    { title: "You Only Live Once (rare version)", src: "audio/You_Only_Live_Once_alternative_version.mp3" }
+  ];
+
+  const audio = document.getElementById("audio");
+  const list = document.getElementById("playlist");
+  let current = -1;
+
+  function play(i) {
+    current = i;
+    audio.src = tracks[i].src;
+    audio.play();
+    [...list.children].forEach((li, n) => li.classList.toggle("playing", n === i));
+  }
+
+  tracks.forEach((t, i) => {
+    const li = document.createElement("li");
+    li.textContent = t.title;
+    li.tabIndex = 0;
+    li.addEventListener("click", () => play(i));
+    li.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); play(i); }
+    });
+    list.appendChild(li);
+  });
+
+  // Play the next track automatically
+  audio.addEventListener("ended", () => {
+    if (current < tracks.length - 1) play(current + 1);
+  });
+</script>
+</body>
+</html>
